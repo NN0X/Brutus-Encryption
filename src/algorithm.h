@@ -18,8 +18,7 @@ namespace Encryption
 
     struct CharacterSet
     {
-        std::string charactersPrintable;
-        std::vector<int> characters;
+        std::vector<char> characters;
         int size;
 
         CharacterSet();
@@ -34,6 +33,7 @@ namespace Encryption
 
     int encryptCharacter(CHARSET charset, char character, int key, int position);
 
+    int stringToInt(std::string text);
     int convertKey(std::string key);
     std::string encrypt(CHARSET charset, std::string text, std::string key);
 

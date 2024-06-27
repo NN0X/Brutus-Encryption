@@ -1,7 +1,7 @@
 ﻿#include "algorithm.h"
 
 Encryption::CharacterSet::CharacterSet()
-    : charactersPrintable(""), characters(), size(0)
+    : characters(), size(0)
 {
     load();
 }
@@ -15,21 +15,12 @@ void Encryption::CharacterSet::load()
         return;
     }
 
-    size = 0;
-    std::string line;
-    while (std::getline(file, line))
-    {
-        for (size_t i = 0; i < line.size(); i++)
-        {
-            charactersPrintable += line;
-            if (find(characters.begin(), characters.end(), line[i]) != characters.end())
-            {
-                continue;
-            }
-            characters.push_back(line[i]);
-            size++;
-        }
-    }
+    file.seekg(0, std::ios::end);
+    size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    characters.resize(size);
+
+    file.read(&characters[0], size);
 
     file.close();
 
@@ -38,23 +29,16 @@ void Encryption::CharacterSet::load()
 
 void Encryption::CharacterSet::sort()
 {
-    for (int i = 0; i < size; i++)
-    {
-        for (int j = 0; j < size - 1; j++)
-        {
-            if (characters[j] > characters[j + 1])
-            {
-                int temp = characters[j];
-                characters[j] = characters[j + 1];
-                characters[j + 1] = temp;
-            }
-        }
-    }
+    std::sort(characters.begin(), characters.end());
 }
 
 void Encryption::CharacterSet::print()
 {
-    std::cout << charactersPrintable << "\n";
+    for (char character : characters)
+    {
+        std::cout << character;
+    }
+    std::cout << "\n";
 }
 
 char Encryption::CharacterSet::operator[](int index)
@@ -64,6 +48,7 @@ char Encryption::CharacterSet::operator[](int index)
 
 int Encryption::CharacterSet::operator[](char character)
 {
+
     int pivot = size / 2;
     int left = 0;
     int right = size - 1;
@@ -121,16 +106,22 @@ int Encryption::encryptCharacter(CHARSET charset, char character, int key, int p
     }
 }
 
+int Encryption::stringToInt(std::string text)
+{
+    int num = 0;
+    for (size_t i = 0; i < text.size(); i++)
+    {
+        num += text[i] * pow(10, i);
+    }
+    return num;
+}
+
 int Encryption::convertKey(std::string key)
 {
     SHA512 sha512;
     std::string keyHash = sha512.hash(key);
 
-    int keyNum = 0;
-    for (size_t i = 0; i < keyHash.size(); i++)
-    {
-        keyNum += keyHash[i] * pow(10, i);
-    }
+    int keyNum = stringToInt(keyHash);
 
     if (keyNum < 0)
     {

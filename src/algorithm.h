@@ -37,10 +37,10 @@ namespace Encryption
         int operator[](char character);
     };
 
-    int encryptCharacter(CHARSET charset, char character, int key, int position);
+    int encryptCharacter(CHARSET charset, char character, unsigned long long int key, int position);
 
-    int stringToInt(std::string text);
-    int convertKey(std::string key);
+    unsigned long long int stringToInt(std::string text);
+    unsigned long long int convertKey(std::string key);
     std::string encrypt(CHARSET charset, std::string text, std::string key);
 
 }

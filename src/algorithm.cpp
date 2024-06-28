@@ -86,17 +86,17 @@ int Encryption::CharacterSet::operator[](char character)
     return -1;
 }
 
-int Encryption::encryptCharacter(CHARSET charset, char character, int key, int position)
+int Encryption::encryptCharacter(CHARSET charset, char character, unsigned long long int key, int position)
 {
     int characterNum = charset[character];
-    int encryptionNum = key * (position + key);
+    unsigned long long int encryptionNum = key * (position + key);
     std::string encryptionStr = std::to_string(encryptionNum);
     std::reverse(encryptionStr.begin(), encryptionStr.end());
     std::string encryptionStrCutoff = encryptionStr.substr(0, encryptionStr.size() - CUTOFF_CONST);
     int encryptionSign = 0;
-    for (size_t i = 0; i < encryptionStrCutoff.size(); i++)
+    for (size_t i = 0; i < encryptionStr.size(); i++)
     {
-        encryptionSign += encryptionStrCutoff[i];
+        encryptionSign += encryptionStr[i];
     }
 
     int offset;
@@ -119,40 +119,31 @@ int Encryption::encryptCharacter(CHARSET charset, char character, int key, int p
     }
 }
 
-int Encryption::stringToInt(std::string text)
+unsigned long long int Encryption::stringToInt(std::string text)
 {
-    int num = 0;
-    int offset = 0;
+    unsigned long long int num = 0;
     const double E = 2.71828182845904523536;
     for (size_t i = 0; i < text.size(); i++)
     {
-        num += text[i] * int(pow(E, i - offset));
-        if (num == INT_MIN)
-            offset = i;
+        num += text[i] * (unsigned long long int)(pow(E, i) * sin(i) * cos(i));
     }
+
     return num;
 }
 
-int Encryption::convertKey(std::string key)
+unsigned long long int Encryption::convertKey(std::string key)
 {
     SHA512 sha512;
     std::string keyHash = sha512.hash(key);
 
-    int keyNum = stringToInt(keyHash);
+    unsigned long long int keyNum = stringToInt(keyHash);
 
-    if (keyNum < 0)
-    {
-        return keyNum * -1;
-    }
-    else
-    {
-        return keyNum;
-    }
+    return keyNum;
 }
 
 std::string Encryption::encrypt(CHARSET charset, std::string text, std::string key)
 {
-    int keyNum = convertKey(key);
+    unsigned long long int keyNum = convertKey(key);
     std::string encryptedText = "";
     for (size_t i = 0; i < text.size(); i++)
     {

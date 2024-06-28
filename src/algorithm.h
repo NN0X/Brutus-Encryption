@@ -14,14 +14,20 @@
 
 namespace Encryption
 {
-    const int OFFSET_CONST = 18;
+    enum
+    {
+        TEXT,
+        HEX
+    };
+
+    const int CUTOFF_CONST = 3;
 
     struct CharacterSet
     {
         std::vector<char> characters;
         int size;
 
-        CharacterSet();
+        CharacterSet(int mode);
 
         void load();
         void sort();

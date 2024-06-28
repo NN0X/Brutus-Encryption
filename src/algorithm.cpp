@@ -1,18 +1,31 @@
 ﻿#include "algorithm.h"
 
-Encryption::CharacterSet::CharacterSet()
+Encryption::CharacterSet::CharacterSet(int mode)
     : characters(), size(0)
 {
-    load();
+    if (mode == TEXT)
+    {
+        load();
+    }
+    else if (mode == HEX)
+    {
+        characters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                      'A', 'B', 'C', 'D', 'E', 'F'};
+        size = characters.size();
+    }
+    else
+    {
+        std::cerr << "Invalid character set mode\n";
+    }
 }
 
 void Encryption::CharacterSet::load()
 {
-    std::ifstream file("chars.txt");
+    std::ifstream file("charset.txt");
     if (!file.is_open())
     {
         std::cerr << "Failed to load character set";
-        return;
+        exit(1);
     }
 
     file.seekg(0, std::ios::end);
@@ -79,7 +92,7 @@ int Encryption::encryptCharacter(CHARSET charset, char character, int key, int p
     int encryptionNum = key * (position + key);
     std::string encryptionStr = std::to_string(encryptionNum);
     std::reverse(encryptionStr.begin(), encryptionStr.end());
-    std::string encryptionStrCutoff = encryptionStr.substr(0, encryptionStr.size() - OFFSET_CONST);
+    std::string encryptionStrCutoff = encryptionStr.substr(0, encryptionStr.size() - CUTOFF_CONST);
     int encryptionSign = 0;
     for (size_t i = 0; i < encryptionStrCutoff.size(); i++)
     {
@@ -109,9 +122,13 @@ int Encryption::encryptCharacter(CHARSET charset, char character, int key, int p
 int Encryption::stringToInt(std::string text)
 {
     int num = 0;
+    int offset = 0;
+    const double E = 2.71828182845904523536;
     for (size_t i = 0; i < text.size(); i++)
     {
-        num += text[i] * pow(10, i);
+        num += text[i] * int(pow(E, i - offset));
+        if (num == INT_MIN)
+            offset = i;
     }
     return num;
 }
@@ -135,10 +152,16 @@ int Encryption::convertKey(std::string key)
 
 std::string Encryption::encrypt(CHARSET charset, std::string text, std::string key)
 {
+    int keyNum = convertKey(key);
     std::string encryptedText = "";
     for (size_t i = 0; i < text.size(); i++)
     {
-        encryptedText += charset[encryptCharacter(charset, text[i], convertKey(key), i)];
+        if (std::find(charset.characters.begin(), charset.characters.end(), text[i]) == charset.characters.end())
+        {
+            std::cerr << "'" << text[i] << "' not found in charset\n";
+            continue;
+        }
+        encryptedText += charset[encryptCharacter(charset, text[i], keyNum, i)];
     }
 
     return encryptedText;

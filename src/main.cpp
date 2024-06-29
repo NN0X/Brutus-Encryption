@@ -1,7 +1,9 @@
-﻿#include "algorithm.h"
+﻿#define ENABLE_ALIASES
+
+#include "algorithm.h"
 #include <iostream>
 
-void mode0(std::string text, std::string key)
+void textMode(std::string text, std::string key)
 {
     CHARSET charset(ENC::TEXT);
     std::string encrypted = encrypt(charset, text, key);
@@ -28,9 +30,14 @@ char fromHex(std::string hex)
     return result;
 }
 
-void test()
+void dictionaryAttack()
 {
     std::ifstream dict("dict.txt");
+    if (!dict.is_open())
+    {
+        std::cerr << "Failed to open dictionary\n";
+        exit(1);
+    }
     std::vector<std::string> words;
     std::string word;
     while (std::getline(dict, word))
@@ -68,7 +75,7 @@ void test()
     std::cout << "Duplicates: " << duplicates << "\n";
 }
 
-void mode1(std::string path, std::string key, std::string outputPath)
+void fileMode(std::string path, std::string key, std::string outputPath)
 {
     std::ifstream file(path, std::ios::binary);
     std::vector<char> data;
@@ -102,7 +109,7 @@ int main(int argc, char *argv[])
 {
     if (argc == 2 && std::string(argv[1]) == "test")
     {
-        test();
+        dictionaryAttack();
         return 0;
     }
     if (argc < 3 || argc > 4)
@@ -114,11 +121,11 @@ int main(int argc, char *argv[])
 
     if (argc == 3)
     {
-        mode0(argv[1], argv[2]);
+        textMode(argv[1], argv[2]);
     }
     else if (argc == 4)
     {
-        mode1(argv[1], argv[2], argv[3]);
+        fileMode(argv[1], argv[2], argv[3]);
     }
 
     return 0;

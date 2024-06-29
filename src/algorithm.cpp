@@ -15,16 +15,16 @@ Encryption::CharacterSet::CharacterSet(int mode)
     }
     else
     {
-        std::cerr << "Invalid character set mode\n";
+        std::cerr << "Invalid charset mode\n";
     }
 }
 
 void Encryption::CharacterSet::load()
 {
-    std::ifstream file("charset.txt");
+    std::ifstream file(CHARSET_FILE);
     if (!file.is_open())
     {
-        std::cerr << "Failed to load character set";
+        std::cerr << "Failed to load charset";
         exit(1);
     }
 
@@ -86,7 +86,7 @@ int Encryption::CharacterSet::operator[](char character)
     return -1;
 }
 
-int Encryption::encryptCharacter(CHARSET charset, char character, unsigned long long int key, int position)
+int Encryption::encryptCharacter(CharacterSet charset, char character, unsigned long long int key, int position)
 {
     int characterNum = charset[character];
     unsigned long long int encryptionNum = key * (position + key);
@@ -119,7 +119,7 @@ int Encryption::encryptCharacter(CHARSET charset, char character, unsigned long 
     }
 }
 
-unsigned long long int Encryption::stringToInt(std::string text)
+unsigned long long int Encryption::genPseudouniqueInteger(std::string text)
 {
     unsigned long long int num = 0;
     const double E = 2.71828182845904523536;
@@ -136,18 +136,18 @@ unsigned long long int Encryption::convertKey(std::string key)
     SHA512 sha512;
     std::string keyHash = sha512.hash(key);
 
-    unsigned long long int keyNum = stringToInt(keyHash);
+    unsigned long long int keyNum = genPseudouniqueInteger(keyHash);
 
     return keyNum;
 }
 
-std::string Encryption::encrypt(CHARSET charset, std::string text, std::string key)
+std::string Encryption::encrypt(CharacterSet charset, std::string text, std::string key)
 {
     unsigned long long int keyNum = convertKey(key);
     std::string encryptedText = "";
     for (size_t i = 0; i < text.size(); i++)
     {
-        if (std::find(charset.characters.begin(), charset.characters.end(), text[i]) == charset.characters.end())
+        if (std::find(charset.characters.begin(), charset.characters.end(), text[i]) == charset.characters.end() && DEBUG)
         {
             std::cerr << "'" << text[i] << "' not found in charset\n";
             continue;

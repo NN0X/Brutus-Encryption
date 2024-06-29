@@ -9,8 +9,10 @@
 
 #include "SHA512.h"
 
+#ifdef ENABLE_ALIASES
 #define ENC Encryption
 #define CHARSET Encryption::CharacterSet
+#endif
 
 namespace Encryption
 {
@@ -20,7 +22,10 @@ namespace Encryption
         HEX
     };
 
-    const int CUTOFF_CONST = 3;
+    const std::string CHARSET_FILE = "charset.txt";
+    const bool DEBUG = false;
+
+    const int CUTOFF_CONST = 3; // arbitrary value (not tested if necessary or optimal)
 
     struct CharacterSet
     {
@@ -37,11 +42,12 @@ namespace Encryption
         int operator[](char character);
     };
 
-    int encryptCharacter(CHARSET charset, char character, unsigned long long int key, int position);
+    int encryptCharacter(CharacterSet charset, char character, unsigned long long int key, int position);
 
-    unsigned long long int stringToInt(std::string text);
+    unsigned long long int genPseudouniqueInteger(std::string text); // pretty much the most important function in this file (the pseudo part)
     unsigned long long int convertKey(std::string key);
-    std::string encrypt(CHARSET charset, std::string text, std::string key);
+
+    std::string encrypt(CharacterSet charset, std::string text, std::string key);
 
 }
 

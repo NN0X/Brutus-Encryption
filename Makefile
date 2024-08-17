@@ -4,7 +4,7 @@ SRC = src
 OUT = brutus
 
 all:
-	rm -r build
+	rm -f -r build
 	mkdir build
 	mkdir build/release
 	$(CXX) $(CFLAGS) $(SRC)/*.cpp -o build/release/$(OUT) 2> build/release/make.log
@@ -20,14 +20,14 @@ all:
 	cp dict.txt build/lib/dict.txt
 
 release:
-	rm -r build
+	rm -f -r build
 	mkdir build
 	$(CXX) $(CFLAGS) $(SRC)/*.cpp -o build/$(OUT) 2> build/make.log
 	cp charset.txt build/charset.txt
 	cp dict.txt build/dict.txt
 
 static:
-	rm -r build
+	rm -f -r build
 	mkdir build
 	$(CXX) $(CFLAGS) -c $(filter-out $(SRC)/main.cpp, $(wildcard $(SRC)/*.cpp)) 2> build/make.log
 	ar rcs build/brutus.a *.o

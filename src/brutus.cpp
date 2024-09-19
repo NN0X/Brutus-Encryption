@@ -3,6 +3,7 @@
 #include "brutus.h"
 #include "algorithm.h"
 #include "utility.h"
+#include "SHA512.h"
 
 #include <iostream>
 
@@ -64,4 +65,20 @@ std::string Brutus::file(std::string path, std::string key, std::string outputPa
     output.close();
 
     return encrypted;
+}
+
+std::string Brutus::Utility::toHex(char byte)
+{
+    return toHex(byte);
+}
+
+char Brutus::Utility::fromHex(std::string hex)
+{
+    return fromHex(hex);
+}
+
+std::string Brutus::Utility::hashSHA512(std::string text)
+{
+    SHA512 sha512;
+    return sha512.hash(text);
 }

@@ -10,6 +10,7 @@ all:
 	$(CXX) $(CFLAGS) $(SRC)/*.cpp -o build/release/$(OUT) 2> build/release/make.log
 	cp charset.txt build/release/charset.txt
 	cp dict.txt build/release/dict.txt
+	cp *.md build/release/
 	
 	mkdir build/lib
 	$(CXX) $(CFLAGS) -c $(filter-out $(SRC)/main.cpp, $(wildcard $(SRC)/*.cpp)) 2> build/lib/make.log
@@ -18,6 +19,7 @@ all:
 	cp src/brutus.h build/lib/brutus.h
 	cp charset.txt build/lib/charset.txt
 	cp dict.txt build/lib/dict.txt
+	cp *.md build/lib/
 
 release:
 	rm -f -r build
@@ -25,6 +27,7 @@ release:
 	$(CXX) $(CFLAGS) $(SRC)/*.cpp -o build/$(OUT) 2> build/make.log
 	cp charset.txt build/charset.txt
 	cp dict.txt build/dict.txt
+	cp *.md build/
 
 static:
 	rm -f -r build
@@ -35,3 +38,4 @@ static:
 	cp src/brutus.h build/brutus.h
 	cp charset.txt build/charset.txt
 	cp dict.txt build/dict.txt
+	cp *.md build/

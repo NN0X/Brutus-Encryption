@@ -1,4 +1,5 @@
 #include "utility.h"
+#include <string>
 
 std::string toHex(char byte)
 {
@@ -16,6 +17,26 @@ char fromHex(std::string hex)
     for (char c : hex)
     {
         result = result * 16 + hexChars.find(c);
+    }
+    return result;
+}
+
+std::string fromHexString(std::string hex)
+{
+    std::string result;
+    for (size_t i = 0; i < hex.size(); i += 2)
+    {
+        result += fromHex(hex.substr(i, 2));
+    }
+    return result;
+}
+
+std::string toHexString(char* bytes, int size)
+{
+    std::string result;
+    for (int i = 0; i < size; i++)
+    {
+        result += toHex(bytes[i]);
     }
     return result;
 }

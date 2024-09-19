@@ -67,18 +67,19 @@ std::string Brutus::file(std::string path, std::string key, std::string outputPa
     return encrypted;
 }
 
-std::string Brutus::Utility::toHex(char byte)
+std::string Brutus::Utility::toHex(char* bytes, int size)
 {
-    return toHex(byte);
+    return ::toHexString(bytes, size);
 }
 
-char Brutus::Utility::fromHex(std::string hex)
+std::string Brutus::Utility::fromHex(std::string hex)
 {
-    return fromHex(hex);
+    return ::fromHexString(hex);
 }
 
-std::string Brutus::Utility::hashSHA512(std::string text)
+std::string Brutus::Utility::hashSHA512(std::string input)
 {
     SHA512 sha512;
-    return sha512.hash(text);
+    return sha512.hash(input);
+
 }

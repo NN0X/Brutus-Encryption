@@ -11,10 +11,9 @@ namespace Brutus
 
 	namespace Utility
 	{
-		std::string toHex(char byte);
-		char fromHex(std::string hex);
-
-		std::string hashSHA512(std::string text);
+		std::string toHex(char *bytes, int size);
+		std::string fromHex(std::string hex);
+		std::string hashSHA512(std::string input);
 	}
 }
 

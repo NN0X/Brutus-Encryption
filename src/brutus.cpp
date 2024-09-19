@@ -3,6 +3,7 @@
 #include "brutus.h"
 #include "algorithm.h"
 #include "utility.h"
+#include "SHA512.h"
 
 #include <iostream>
 
@@ -80,4 +81,5 @@ std::string Brutus::Utility::hashSHA512(std::string input)
 {
     SHA512 sha512;
     return sha512.hash(input);
+
 }

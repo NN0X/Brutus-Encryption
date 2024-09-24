@@ -1,0 +1,2 @@
+Usage: ./build/release/brutus <text> <key>
+Usage: ./build/release/brutus <file> <key> <output>

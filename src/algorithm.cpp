@@ -1,5 +1,15 @@
 ﻿#include "algorithm.h"
 
+//  !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ\_abcdefghijklmnopqrstuvwxyz
+
+const std::vector<char> DEFAULT_CHARSET = {' ', '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',', '-', '.', '/', '0', '1',
+                                           '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', 'A', 'B', 'C',
+                                           'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+                                           'V', 'W', 'X', 'Y', 'Z', '\\', '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k',
+                                           'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+const std::vector<char> HEX_CHARSET = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                                       'A', 'B', 'C', 'D', 'E', 'F'};
+
 Encryption::CharacterSet::CharacterSet(int mode)
     : characters(), size(0)
 {
@@ -9,8 +19,7 @@ Encryption::CharacterSet::CharacterSet(int mode)
     }
     else if (mode == HEX)
     {
-        characters = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                      'A', 'B', 'C', 'D', 'E', 'F'};
+        characters = HEX_CHARSET;
         size = characters.size();
     }
     else
@@ -24,8 +33,10 @@ void Encryption::CharacterSet::load()
     std::ifstream file(CHARSET_FILE);
     if (!file.is_open())
     {
-        std::cerr << "Failed to load charset";
-        exit(1);
+        //std::cerr << "Failed to load charset";
+        characters = DEFAULT_CHARSET;
+        size = characters.size();
+        return;
     }
 
     file.seekg(0, std::ios::end);

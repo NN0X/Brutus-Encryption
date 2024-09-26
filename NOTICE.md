@@ -10,4 +10,4 @@ Software: Brutus Encryption
 
 License: Apache 2.0
 
-Licensor: NoX - ts.sarkowicz@gmail.com
+Licensor: NoX - nox@noxsoftware.pl

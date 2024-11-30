@@ -6,48 +6,27 @@ import random
 import string
 import matplotlib.pyplot as plt
 import math
-
-def f(x, a=2**60, b=0.004, c=0.5):
-    return -(a * np.exp(-b * (x - 64)**2) + c * x)
-
-def flip(f, line, axis='x'):
-    if axis == 'x':
-         return lambda x: f(2 * line - x)
-    elif axis == 'y':
-        return lambda x: 2 * line - f(x)
-    else:
-        raise ValueError("axis must be 'x' or 'y'")
-
-def fFlip(x):
-    return flip(f, 0, axis='y')(x)
-
-def doubleToUInt64(value):
-    value = int(value)
-    return value & 0xFFFFFFFFFFFFFFFF
+import subprocess
 
 def addWithOverflow(a, b):
-    a = int(a)
-    b = int(b)
-    return (a + b) & 0xFFFFFFFFFFFFFFFF
-
-def multiplyWithOverflow(a, b):
-    a = int(a)
-    b = int(b)
-    return (a * b) & 0xFFFFFFFFFFFFFFFF
+    # run add executable with a and b as arguments
+    # return the sum of a and b
+    # output: sum (unsigned long long int)
+    process = subprocess.Popen(["./add", str(a), str(b)], stdout=subprocess.PIPE)
+    output = process.communicate()[0].decode().strip()
+    return int(output)
 
 def genPseudouniqueInteger(text):
-    num = 0
-    elements = []
-    E = 2.71828182845904523536
-    for i in range(len(text)):
-        integerComponent = np.power(E, i) * np.sin(i) * np.cos(i) + fFlip(i) + np.sin(1 / (np.sqrt(i + 1)))
-        integerComponent = doubleToUInt64(integerComponent)
-        wordComponent = np.power(E, ord(text[i]))
-        wordComponent = doubleToUInt64(wordComponent)
-        elements.append(multiplyWithOverflow(wordComponent, integerComponent))
-        #elements.append(ord(text[i]) * integerComponent)
-        num = addWithOverflow(num, elements[-1])
-    return num, elements
+    # run pseudounique executable with text as argument
+    # return the pseudounique integer value and the number of elements in the text
+    # output: pseudouniqueValue element1 element2 ... elementN (unsigned long long int)
+    # example: 123 4 5 6 7
+    process = subprocess.Popen(["./pseudouniq", text], stdout=subprocess.PIPE)
+    output = process.communicate()[0].decode().strip()
+    output = output.split()
+    pseudouniqueValue = int(output[0])
+    elements = [int(x) for x in output[1:]]
+    return pseudouniqueValue, elements
 
 def hashString(string):
     hash = hashlib.sha512(string.encode()).hexdigest()
@@ -57,26 +36,35 @@ def genRandomWord(length=8):
     return ''.join(random.choices(string.ascii_lowercase, k=length))
 
 def main():
+    MAX_ATTEMPTS = 10000000
     pseudouniqueValues = set()
     allPseudouniqueValues = []
 
     print("Press 'Ctrl + C' to stop and display the plot.\n")
-
+    input("Press 'Enter' to start generating words...")
     try:
         elementsPerValue = []
-        while True:
+        attempts = 1
+        nonUnique = 0
+        while True and attempts < MAX_ATTEMPTS + 1:
             word = genRandomWord()
             hashed = hashString(word)
             pseudouniqueValue, elems = genPseudouniqueInteger(hashed)
             elementsPerValue.append(elems)
             if pseudouniqueValue not in pseudouniqueValues:
-                print(f"unique: {word}")
+                print(f"attempt: {attempts} | unique: {word}")
                 pseudouniqueValues.add(pseudouniqueValue)
             else:
-                print(f"not unique: {word}")
-                input()
+                print(f"attempt: {attempts} | not unique: {word}")
+                nonUnique += 1
             allPseudouniqueValues.append(pseudouniqueValue)
+            attempts += 1
+        if attempts == MAX_ATTEMPTS + 1:
+            raise KeyboardInterrupt
     except KeyboardInterrupt:
+        print(f"\nUnique words generated: {len(pseudouniqueValues)}")
+        print(f"Non-unique words generated: {nonUnique}")
+
         print("\nStopping word generation. Generating plot...")
 
         plt.figure(figsize=(12, 8))
@@ -111,18 +99,9 @@ def main():
         plt.ylabel("Standard Deviation of Contribution to Pseudounique Value")
         plt.title("Scatter Plot of Standard Deviation of Contribution of Elements to Pseudounique Values")
 
-        x = np.linspace(0, 128)
-        y = fFlip(x)
+        probe = 20
         plt.figure(figsize=(12, 8))
-        plt.plot(x, y, color='orange')
-        plt.xlabel("x")
-        plt.ylabel("f(x)")
-        plt.title("Plot of f(x) = 100 * exp(-0.01 * (x - 25)^2) + 0.5 * x")
-
-        # plot the process of adding elements to the pseudounique value for randomly selected 100 pseudounique values
-        # use function addWithOverflow to add elements to the pseudounique value
-        plt.figure(figsize=(12, 8))
-        for i in range(10):
+        for i in range(probe):
             randomIndex = random.randint(0, len(allPseudouniqueValues) - 1)
             pseudouniqueValue = allPseudouniqueValues[randomIndex]
             elements = elementsPerValue[randomIndex]
@@ -133,7 +112,7 @@ def main():
             plt.plot(range(len(cumulativeSum)), cumulativeSum, label=f"Pseudounique Value {randomIndex}")
         plt.xlabel("Index of Element")
         plt.ylabel("Cumulative Sum of Elements")
-        plt.title("Plot of Cumulative Sum of Elements for 10 Pseudounique Values")
+        plt.title(f"Plot of Cumulative Sum of Elements for {probe} Pseudounique Values")
 
         plt.show()
 

@@ -62,8 +62,8 @@ def main():
         if attempts == MAX_ATTEMPTS + 1:
             raise KeyboardInterrupt
     except KeyboardInterrupt:
-        print(f"\nUnique words generated: {len(pseudouniqueValues)}")
-        print(f"Non-unique words generated: {nonUnique}")
+        print(f"\nUnique values generated: {len(pseudouniqueValues)}")
+        print(f"Non-unique values generated: {nonUnique}")
 
         print("\nStopping word generation. Generating plot...")
 

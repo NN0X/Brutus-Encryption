@@ -14,7 +14,7 @@ all:
 	
 	mkdir build/lib
 	$(CXX) $(CFLAGS) -c $(filter-out $(SRC)/main.cpp, $(wildcard $(SRC)/*.cpp)) 2> build/lib/make.log
-	ar rcs build/lib/brutus.a *.o
+	ar rcs build/lib/libbrutus.a *.o
 	rm *.o
 	cp src/brutus.h build/lib/brutus.h
 	cp charset.txt build/lib/charset.txt
@@ -33,9 +33,16 @@ static:
 	rm -f -r build
 	mkdir build
 	$(CXX) $(CFLAGS) -c $(filter-out $(SRC)/main.cpp, $(wildcard $(SRC)/*.cpp)) 2> build/make.log
-	ar rcs build/brutus.a *.o
+	ar rcs build/libbrutus.a *.o
 	rm *.o
 	cp src/brutus.h build/brutus.h
 	cp charset.txt build/charset.txt
 	cp dict.txt build/dict.txt
 	cp *.md build/
+
+.PHONY: analizer
+analizer:
+	rm -f -r analizer/build
+	mkdir analizer/build
+	$(CXX) $(CFLAGS) analizer/analizer.cpp -o analizer/build/analizer -Lbuild/lib -lbrutus 2> analizer/build/make.log
+	cp analizer/analizer.py analizer/build/analizer.py

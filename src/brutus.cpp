@@ -83,3 +83,23 @@ std::string Brutus::Utility::hashSHA512(std::string input)
     return sha512.hash(input);
 
 }
+
+int Brutus::Internal::encryptCharacter(char character, unsigned long long int key, int position)
+{
+    return Encryption::encryptCharacter(CHARSET(ENC::TEXT), character, key, position);
+}
+
+unsigned long long int Brutus::Internal::genPseudouniqueInteger(std::string text)
+{
+    return Encryption::genPseudouniqueInteger(text);
+}
+
+unsigned long long int Brutus::Internal::convertKey(std::string key)
+{
+    return Encryption::convertKey(key);
+}
+
+std::string Brutus::Internal::encrypt(std::string text, std::string key)
+{
+    return Encryption::encrypt(CHARSET(ENC::TEXT), text, key);
+}

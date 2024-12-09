@@ -135,7 +135,7 @@ unsigned long long int Encryption::genPseudouniqueInteger(std::string text)
     const double E = 2.71828182845904523536;
     for (size_t i = 0; i < text.size(); i++)
     {
-        num += text[i] * (unsigned long long int)(pow(E, i) * sin(i) * cos(i));
+        num += text[i] * (unsigned long long int)(pow(E, i) * sin(i) * cos(i) + 100 * i * pow(E, log(i + text[i] + 1)));
     }
 
     return num;

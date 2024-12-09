@@ -27,7 +27,7 @@ def main():
     print("Press 'Ctrl + C' to stop and display the plot.\n")
     input("Press 'Enter' to start generating words...")
     try:
-        elementsPerValue = []
+        allCharnums = []
         attempts = 1
         nonUnique = 0
         word = "hello"
@@ -41,6 +41,7 @@ def main():
                 print(f"attempt: {attempts} | not unique: {key}")
                 nonUnique += 1
             allPseudouniqueValues.append(pseudouniqueValue)
+            allCharnums.append(charnums)
             attempts += 1
         if attempts == MAX_ATTEMPTS + 1:
             raise KeyboardInterrupt
